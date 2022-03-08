@@ -16,7 +16,7 @@ require (
 	github.com/golang/mock v1.6.0 // indirect
 	github.com/lestrrat/go-strftime v0.0.0-20180220042222-ba3bf9c1d042 // indirect
 	github.com/pkg/errors v0.9.1 // indirect
-	github.com/sirkon/deepequal v0.3.0 // indirect
+	github.com/sirkon/deepequal v0.4.0 // indirect
 	github.com/sirkon/go-format v0.1.2 // indirect
 	github.com/sirkon/go-format/v2 v2.0.1 // indirect
 	github.com/sirkon/jsonexec v0.0.1 // indirect

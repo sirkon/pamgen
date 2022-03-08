@@ -29,6 +29,8 @@ github.com/pmezard/go-difflib v1.0.0 h1:4DBwDE0NGyQoBHbLQYPwSUPoCMWR5BEzIk/f1lZb
 github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZNVY4sRDYZ/4=
 github.com/sirkon/deepequal v0.3.0 h1:cZ83yxBPaCFTkoWverYX1FCThXh+yo11GE91R23Ifls=
 github.com/sirkon/deepequal v0.3.0/go.mod h1:yBJ/bQMeqAuZHcPWr/moba9j5KQLKZE/7gX8RjowBBM=
+github.com/sirkon/deepequal v0.4.0 h1:exIOEEJlabILf251D0FJ/OYZ11qzd3O1o+NjYo4QXOM=
+github.com/sirkon/deepequal v0.4.0/go.mod h1:yBJ/bQMeqAuZHcPWr/moba9j5KQLKZE/7gX8RjowBBM=
 github.com/sirkon/errors v0.2.1 h1:cbf0gEEpnSsnw3BoZzKubrBYhLohmyB1LgWB+sGedT0=
 github.com/sirkon/errors v0.2.1/go.mod h1:QHzAIbAhNXYSz3uK9tvp99vPxroQWjNz4PbRg8Ef3Wc=
 github.com/sirkon/go-format v0.1.2 h1:rv/Gp5qXmNrSaqm6ygxXEdDOuMpGYbcW+QScHpGgWxk=
