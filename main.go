@@ -56,12 +56,18 @@ func main() {
 		uniqIfaces[iface.base] = iface.replacement
 	}
 
-	if err := run(cli.SourcePackage, cli.Destination, cli.Package, uniqIfaces); err != nil {
+	if err := run(cli.SourcePackage, cli.Destination, cli.Package, uniqIfaces, cli.Whatever); err != nil {
 		message.Fatal(err)
 	}
 }
 
-func run(srcpkgpath string, dest string, pkgname string, interfaces map[string]string) error {
+func run(
+	srcpkgpath string,
+	dest string,
+	pkgname string,
+	interfaces map[string]string,
+	genWhatever bool,
+) error {
 	// generation setup
 	mod, err := gogh.New(
 		gogh.GoFmt,
@@ -155,7 +161,7 @@ func run(srcpkgpath string, dest string, pkgname string, interfaces map[string]s
 			continue
 		}
 
-		generate(r, iface, interfaces[ifacename], srcpkg, ifacename)
+		generate(r, iface, interfaces[ifacename], srcpkg, ifacename, genWhatever)
 	}
 
 	if err := mod.Render(); err != nil {

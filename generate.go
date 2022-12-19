@@ -17,6 +17,7 @@ func generate(
 	replace string,
 	srcpkg *packages.Package,
 	ifacename string,
+	whatever bool,
 ) {
 	constructor := "New" + replace
 	if replace[:1] != strings.ToUpper(replace[:1]) {
@@ -61,9 +62,9 @@ func generate(
 		q.Uniq("ret")
 
 		if !s.Variadic() {
-			generateRegularMethod(q, iface, replace, srcpkg, ifacename, m, s)
+			generateRegularMethod(q, iface, replace, srcpkg, ifacename, m, s, whatever)
 		} else {
-			generateVariadicMethod(q, iface, replace, srcpkg, ifacename, m, s)
+			generateVariadicMethod(q, iface, replace, srcpkg, ifacename, m, s, whatever)
 		}
 	}
 }
@@ -76,6 +77,7 @@ func generateRegularMethod(
 	ifacename string,
 	m *types.Func,
 	s *types.Signature,
+	whatever bool,
 ) {
 	r.N()
 	r.L(`// $0 method to implement $1.$2`, m.Name(), srcpkg.PkgPath, ifacename)
@@ -135,7 +137,7 @@ func generateRegularMethod(
 
 	recorderArgs := args.String()
 	if recorderArgs != "" {
-		recorderArgs += " interface{}"
+		recorderArgs += " any"
 	}
 
 	r.N()
@@ -172,6 +174,21 @@ func generateRegularMethod(
 	)
 
 	r.L(`}`)
+
+	if !whatever {
+		return
+	}
+
+	r.L(`// $0Whatever records a call with arbitrary arguments.`, methodName)
+	r.L(`func (mr *$0MockRecorder) $1Whatever() *$gomock.Call {`, replace, methodName)
+
+	wargs := &gogh.Commas{}
+	for i := 0; i < s.Params().Len(); i++ {
+		wargs.Add(r.S("$gomock.Any()"))
+	}
+
+	r.L(`    return mr.$0($1)`, methodName, wargs)
+	r.L(`}`)
 }
 
 func generateVariadicMethod(
@@ -182,6 +199,7 @@ func generateVariadicMethod(
 	ifacename string,
 	m *types.Func,
 	s *types.Signature,
+	whatever bool,
 ) {
 	r.N()
 	r.L(`// $0 method to implement $1.$2`, m.Name(), srcpkg.PkgPath, ifacename)
@@ -239,7 +257,7 @@ func generateVariadicMethod(
 
 	r.L(`func (m *$0Mock) $1($2) ($3) {`, replace, m.Name(), params, returns)
 	r.L(`    m.ctrl.T.Helper()`)
-	r.L(`    $0 := []interface{}{$1}`, vararg, args)
+	r.L(`    $0 := []any{$1}`, vararg, args)
 	r.L(`    for _, $0 := range $1 {`, itemname, last)
 	r.L(`        $0 = append($0, $1)`, vararg, itemname)
 	r.L(`    }`)
@@ -257,7 +275,7 @@ func generateVariadicMethod(
 
 	recorderargs := args.String()
 	if recorderargs != "" {
-		recorderargs += " interface{},"
+		recorderargs += " any,"
 	}
 
 	r.L(` // $0 register expected call of method $1.$2.$0`, m.Name(), srcpkg, ifacename)
@@ -272,14 +290,14 @@ func generateVariadicMethod(
 	r.Imports().Deepequal().Ref("deepequal")
 	r.Imports().Reflect().As("reflect")
 	r.L(
-		`func (mr *$0MockRecorder) $1($2 $3 ...interface{}) *$gomock.Call {`,
+		`func (mr *$0MockRecorder) $1($2 $3 ...any) *$gomock.Call {`,
 		replace,
 		methodName,
 		recorderargs,
 		last,
 	)
 	r.L(`    mr.mock.ctrl.T.Helper()`)
-	r.L(`    $0 := append([]interface{}{$1}, $2...)`, vararg, args, last)
+	r.L(`    $0 := append([]any{$1}, $2...)`, vararg, args, last)
 	r.N()
 	r.L(`    for i, v := range $0 {`, vararg)
 	r.L(`        if _, ok := v.($gomock.Matcher); ok {`)
@@ -295,5 +313,23 @@ func generateVariadicMethod(
 		m.Name(),
 		vararg,
 	)
+	r.L(`}`)
+
+	if !whatever {
+		return
+	}
+
+	r.L(`// $0Whatever registers a call with arbitrary positional and n variadic arguments`, methodName)
+	r.L(`func (mr *$0MockRecorder) $1Whatever(n int) $gomock.Call {`, replace, methodName)
+	r.L(`    var args []any`)
+	r.L(`    for i := 0; i < n; i++ {`)
+	r.L(`        args = append(args, $gomock.Any())`)
+	r.L(`    }`)
+
+	wargs := &gogh.Commas{}
+	for i := 0; i < s.Params().Len()-1; i++ {
+		wargs.Add(r.S("$gomock.Any()"))
+	}
+	r.L(`    return mr.$0($1, args...)`, methodName, wargs)
 	r.L(`}`)
 }

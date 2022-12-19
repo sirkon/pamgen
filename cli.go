@@ -12,6 +12,7 @@ type cliDefinition struct {
 	SourcePackage string          `short:"s" help:"Source package to look for interfaces in."`
 	Destination   string          `short:"d" help:"Destination file to store generated mocks in with the current directory as a root." required:""`
 	Package       string          `short:"p" help:"Package name for generated file. Will be ignored if the package exists and has different name."`
+	Whatever      bool            `short:"w" help:"Generate 'whatever' recorders."`
 	Interfaces    []interfaceName `arg:"" help:"List of interfaces names to generate mocks for" optional:""`
 	Version       bool            `short:"v" help:"Show version and exit."`
 }
